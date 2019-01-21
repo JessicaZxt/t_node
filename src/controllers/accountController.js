@@ -73,7 +73,7 @@ exports.getVcode = (req, res) => {
     p.color(80, 80, 80, 255); // Second color: paint (red, green, blue, alpha)
 
     var img = p.getBase64();
-    var imgbase64 = new Buffer(img, 'base64');
+    var imgbase64 = Buffer.from(img, "base64");
     res.writeHead(200, {
         'Content-Type': 'image/png'
     });

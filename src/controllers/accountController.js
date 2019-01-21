@@ -2,13 +2,10 @@
 const path = require('path');
 const captchapng = require('captchapng');
 
-const MongoClient = require('mongodb').MongoClient;
 
-// Connection URL
-const url = 'mongodb://localhost:27017';
+//导入封装的databasetool
+const databasetool = require(path.join(__dirname, '../tools/databasetool'));
 
-// Database Name
-const dbName = 'qdzxt';
 
 //访问注册页面
 exports.getRegisterPage = (req, res) => {
@@ -22,40 +19,28 @@ exports.register = (req, res) => {
         message: '注册成功'
     };
     const { username } = req.body;
-    console.log(username);
 
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
-        const db = client.db(dbName);
-        // Get the documents collection
-        const collection = db.collection('accountinfo');
-        //判断用户名是否存在
-        collection.findOne({ username }, (err, doc) => {
-            if (doc) {
-                //存在
-                result.status = 1;
-                result.message = '用户名已存在';
-                //关闭数据库
-                client.close();
+    databasetool.findOne('accountinfo', { username }, (err, doc) => {
+        if (doc) {
+            //存在
+            result.status = 1;
+            result.message = '用户名已存在';
+            //返回注册状态
+            res.json(result);
+        } else {
+            //不存在，添加数据到数据库
+            databasetool.insertOne('accountinfo', req.body, (err, doc) => {
+                if (!doc) {
+                    //操作失败
+                    result.status = 2;
+                    result.message = '注册失败';
+                }
                 //返回注册状态
                 res.json(result);
-            } else {
-                //不存在，添加数据到数据库
-                collection.insertOne(req.body, (err, result2) => {
-                    if (!result2) {
-                        //操作失败
-                        result.status = 2;
-                        result.message = '注册失败';
+            })
 
-                    }
-                    client.close();
-                    //返回注册状态
-                    res.json(result);
-                })
-            }
-        })
-
-    });
-
+        }
+    })
 }
 
 //访问登录页面
@@ -97,7 +82,17 @@ exports.Login = (req, res) => {
     //判断验证码是否正确
     if (session == vcode) {
         //继续判断用户名及密码是否正确
-        MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
+        databasetool.findOne('accountinfo',{ username, password },(err,doc)=>{
+            if (!doc) {
+                //错误
+                result.status = 2;
+                result.message = '用户名或密码有误';
+            }
+            //返回注册状态
+            res.json(result);
+        })
+        //继续判断用户名及密码是否正确
+       /*  MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
             const db = client.db(dbName);
             // Get the documents collection
             const collection = db.collection('accountinfo');
@@ -115,7 +110,7 @@ exports.Login = (req, res) => {
                 res.json(result);
             })
 
-        });
+        }); */
 
     } else {
         //验证码不正确

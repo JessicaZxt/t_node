@@ -52,4 +52,11 @@
         </table>
     </div>
 </div>
+<script>
+    function search() {
+        //获取输入框的值
+        const keywords = $('#studentNameId').val();
+        location.href = `/student/list?key=${keywords}`;
+    }
+</script>
 {{/block}}

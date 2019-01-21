@@ -68,6 +68,8 @@
         $.post('/account/login',{username,password,vcode},(result)=>{
             if(result.status!=0){
                 alert(result.message);
+            }else{
+                location.href='/student/list';
             }
         })
     }

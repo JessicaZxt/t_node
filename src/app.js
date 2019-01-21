@@ -20,6 +20,9 @@ app.use(express.static(path.join(__dirname,'public')));
 const accountRouter=require(path.join(__dirname,'routers/accountRouter.js'));
 app.use('/account',accountRouter);
 
+const studentRouter=require(path.join(__dirname,'routers/studentRouter.js'));
+app.use('/student',studentRouter);
+
 
 //启动
 app.listen(8080,'127.0.0.1',err=>{

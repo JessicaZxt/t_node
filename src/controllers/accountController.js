@@ -91,6 +91,8 @@ exports.Login = (req, res) => {
 
     //取到传过来的用户名，密码，以及验证码的参数
     const { username, password, vcode } = req.body;
+    console.log(username, password);
+
     console.log(session);
     //判断验证码是否正确
     if (session == vcode) {
@@ -101,28 +103,16 @@ exports.Login = (req, res) => {
             const collection = db.collection('accountinfo');
             //判断用户名及密码是否存在
             collection.findOne({ username, password }, (err, doc) => {
+                console.log(doc);
                 if (!doc) {
-                    //不存在
+                    //错误
                     result.status = 2;
-                    result.message = '请先注册';
-                    //关闭数据库
-                    client.close();
-                    //返回注册状态
-                    res.json(result);
-                } else if (username != doc[username] || password != doc[password]) {
-                    //数据有误
-                    result.status = 3;
                     result.message = '用户名或密码有误';
-                    //关闭数据库
-                    client.close();
-                    //返回注册状态
-                    res.json(result);
-                } else { 
-                    //关闭数据库
-                    client.close();
-                    //返回注册状态
-                    res.json(result);
                 }
+                //关闭数据库
+                client.close();
+                //返回注册状态
+                res.json(result);
             })
 
         });

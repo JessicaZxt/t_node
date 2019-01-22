@@ -10,6 +10,8 @@ const studentControllers=require(path.join(__dirname,'../controllers/studentCont
 
 //处理请求
 studentRounter.get('/list',studentControllers.getListPage);
+studentRounter.get('/add',studentControllers.getAddPage);
+studentRounter.post('/add',studentControllers.add);
 
 //导出
 module.exports=studentRounter;

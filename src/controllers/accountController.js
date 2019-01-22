@@ -74,6 +74,8 @@ exports.Login = (req, res) => {
     //判断验证码是否正确
     const session = req.session.vcode;
 
+
+
     //取到传过来的用户名，密码，以及验证码的参数
     const { username, password, vcode } = req.body;
     console.log(username, password);
@@ -82,35 +84,18 @@ exports.Login = (req, res) => {
     //判断验证码是否正确
     if (session == vcode) {
         //继续判断用户名及密码是否正确
-        databasetool.findOne('accountinfo',{ username, password },(err,doc)=>{
+        databasetool.findOne('accountinfo', { username, password }, (err, doc) => {
+            console.log(doc);
             if (!doc) {
                 //错误
                 result.status = 2;
                 result.message = '用户名或密码有误';
+            }else{
+                req.session.loginedName = username;
             }
             //返回注册状态
             res.json(result);
         })
-        //继续判断用户名及密码是否正确
-       /*  MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
-            const db = client.db(dbName);
-            // Get the documents collection
-            const collection = db.collection('accountinfo');
-            //判断用户名及密码是否存在
-            collection.findOne({ username, password }, (err, doc) => {
-                console.log(doc);
-                if (!doc) {
-                    //错误
-                    result.status = 2;
-                    result.message = '用户名或密码有误';
-                }
-                //关闭数据库
-                client.close();
-                //返回注册状态
-                res.json(result);
-            })
-
-        }); */
 
     } else {
         //验证码不正确

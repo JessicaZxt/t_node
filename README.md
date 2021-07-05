@@ -1,2 +1,2 @@
-# zxt_node
+# z_node
 node项目
